@@ -8,7 +8,7 @@ This project replaces a traditional **Apache NiFi**-based ingestion flow with an
 
 ## Architecture
 
-![Architecture](./screenshots/architecture.png)
+![Architecture](./screenshots/Architecture.jpg)
 
 **Flow:** `Airflow (Docker on EC2) → S3 → Snowpipe → Staging Tables → Snowflake Stream → Snowflake Task (every 5 min) → Final Tables`
 
