@@ -6,7 +6,7 @@ This project replaces a traditional **Apache NiFi**-based ingestion flow with an
 
 ---
 
-## Architecture
+## Architecture.
 
 ![Architecture](./screenshots/Architecture.jpg)
 
