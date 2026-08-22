@@ -43,9 +43,6 @@ Airflow runs inside Docker containers on an **AWS EC2 (Ubuntu)** instance.
 - **Instance connection:** SSH via key pair (`.pem` file), connected here through VS Code's Remote development (`ssh -i "SCD.pem" ubuntu@<ec2-public-ip>`)
 - **Region:** ap-south-1
 - ⚠️ Public IP changes on every instance stop/start unless an Elastic IP is attached — reconnect with the current IP shown in the EC2 console.
-
-![EC2 SSH connection](./screenshots/ec2-ssh-connection.png)
-
 ### Docker Compose — Airflow Stack
 
 Official Airflow `docker-compose.yaml` (CeleryExecutor), running these services:
@@ -67,9 +64,6 @@ docker ps          # confirm all containers are "healthy"
 ```
 
 Extra Python packages (`boto3`, `faker`, `yfinance`) are installed via `_PIP_ADDITIONAL_REQUIREMENTS` in `.env`, so they persist across container rebuilds.
-
-![Docker containers running](./screenshots/docker-ps.png)
-
 ### Accessing the Airflow UI
 
 ```
@@ -86,7 +80,7 @@ Security Group inbound rule required: **Custom TCP, port 8080**, source = your I
 
 Secure, key-less connection between Snowflake and the S3 bucket using an IAM role trust relationship.
 
-![Storage Integration](./screenshots/storage-integration.png)
+![Storage Integration](./screenshots/Storage Integration create query + success message.png)
 
 ### 2. File Format + External Stage
 
@@ -104,7 +98,7 @@ CREATE OR REPLACE STAGE s3_airflow_stage
   FILE_FORMAT = csv_file_format;
 ```
 
-![File Format and External Stage](./screenshots/file-format-stage.png)
+![File Format and External Stage](./screenshots/File Format + External Stage create query.png)
 
 ### 3. Verifying the Stage
 
@@ -114,7 +108,7 @@ LIST @s3_airflow_stage;
 
 Confirms Snowflake can see the files Airflow uploaded to S3.
 
-![LIST stage output](./screenshots/list-stage.png)
+![LIST stage output](./screenshots/LIST @s3_airflow_stage.png)
 
 ### 4. Staging Tables
 
@@ -144,7 +138,7 @@ CREATE OR REPLACE TABLE tesla_stock_staging (
 );
 ```
 
-![Staging table schemas](./screenshots/staging-schema.png)
+![Staging table schemas](./screenshots/Staging Tables schema.png)
 
 ### 5. Snowpipes (Auto-Ingest)
 
@@ -164,11 +158,11 @@ FROM @s3_airflow_stage/tesla_stock/
 FILE_FORMAT = (FORMAT_NAME = csv_file_format);
 ```
 
-![Snowpipes](./screenshots/snowpipes.png)
+![Snowpipes](./screenshots/Snowpipes.png)
 
 The `notification_channel` (SQS ARN) from `SHOW PIPES;` was registered as an S3 Event Notification so that every new file automatically triggers ingestion — no polling, no manual `COPY INTO`.
 
-![S3 Event Notification config](./screenshots/s3-event-notification.png)
+![S3 Event Notification config](./screenshots/S3 Event Notification config.png)
 
 ### 6. Airflow DAG
 
@@ -177,13 +171,13 @@ The `nifi_replacement_fetch_to_s3` DAG runs daily (and on-demand) with two paral
 - `generate_and_upload_customers` — generates 1,000 fake customer records with Faker
 - `fetch_and_upload_tesla_stock` — pulls the last 5 days of TSLA OHLCV data via yfinance
 
-![Airflow DAG](./screenshots/dag.png)
+![Airflow DAG](./screenshots/DAG.png)
 
 ### 7. Auto-Ingest Proof
 
 New data lands in the staging tables automatically within seconds of the DAG run completing — no manual `COPY INTO` required.
 
-![Auto-ingest proof](./screenshots/auto-ingest-proof.png)
+![Auto-ingest proof](./screenshots/Auto-ingest-proof.png)
 
 ---
 
@@ -241,7 +235,7 @@ BEGIN
 END;
 ```
 
-![Tasks](./screenshots/tasks.png)
+![Tasks](./screenshots/Tasks.png)
 
 ---
 
@@ -261,7 +255,7 @@ ORDER BY customer_sk;
 | 1 | 0 | Juan | Hooperberg | Hawaii | FALSE | 2026-08-22 09:17:38 |
 | 11401 | 0 | Juan | Miami | Florida | TRUE | NULL |
 
-![SCD Type 2 proof](./screenshots/scd-type2.png)
+![SCD Type 2 proof](./screenshots/SCD Type 2.png)
 
 ### Final Tables
 
@@ -270,7 +264,7 @@ SELECT * FROM customer_dim LIMIT 10;
 SELECT * FROM tesla_stock_fact;
 ```
 
-![Final tables](./screenshots/final-tables.png)
+![Final tables](./screenshots/Final Tables.png)
 
 ---
 
