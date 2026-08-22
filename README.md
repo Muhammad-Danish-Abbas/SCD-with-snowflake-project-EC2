@@ -82,7 +82,7 @@ Security Group inbound rule required: **Custom TCP, port 8080**, source = your I
 
 Secure, key-less connection between Snowflake and the S3 bucket using an IAM role trust relationship.
 
-![Storage Integration](./screenshots/Storage%20Integration%20create%20query%20+%20success%20message....png)
+![Storage Integration](./screenshots/Storage-Integration.png)
 
 ### 2. File Format + External Stage
 
